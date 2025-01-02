@@ -1,0 +1,29 @@
+{
+    "concat.py": {
+        "input_file": {
+            "label": "选择输入文件",
+            "type": "file",
+            "directory": "./data"
+        },
+        "param2": {
+            "label": "选择参数2",
+            "type": "select",
+            "options": ["选项1", "选项2", "选项3"],
+            "default": "选项2"
+        },
+        "param3": {
+            "label": "数字参数3",
+            "type": "files",
+            "default": 10
+        }
+    },
+    "i18n.py": {
+        "threshold": {
+            "label": "阈值",
+            "type": "slider",
+            "min": 0,
+            "max": 100,
+            "default": 50
+        }
+    }
+}

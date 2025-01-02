@@ -6,10 +6,9 @@ from scp import SCPClient
 
 # 配置
 LOCAL_GIT_DIR = 'D:/safe/blj_web/BLJ/src/main/webapp/'  # 本地 Git 仓库路径
-REMOTE_HOST = '192.168.1.176'  # Linux 服务器的 IP 或域名
 REMOTE_PORT = 22  # 默认 SSH 端口是 22
 REMOTE_USER = 'root'  # 远程服务器的 SSH 用户名
-REMOTE_PASSWORD = 'BLJ@2024blj'  # 远程服务器的 SSH 密码（也可以使用密钥）
+REMOTE_PASSWORD = 'admin@123'  # 远程服务器的 SSH 密码（也可以使用密钥）
 REMOTE_BASE_DIR = '/opt/lsblj/tomcat/webapps/ROOT/'  # 远程机器上需要存放文件的目录
 
 # 创建 SSH 客户端
@@ -37,12 +36,12 @@ def copy_files_to_remote(ssh_client, local_files):
             ssh_client.exec_command(f"mkdir -p {remote_dir}")
             
             # 复制文件到远程路径
-            print(f"Copying {local_file} to {remote_file_path}")
+            print(f"【{local_file}】->【{remote_file_path}】")
             scp.put(local_file_path, remote_file_path)
         
-        print("Files successfully copied to remote server.")
+        print("发送成功")
     except Exception as e:
-        print(f"Error copying files to remote server: {e}")
+        print(f"发送失败了TAT: {e}")
 
 # 获取本地 Git 仓库中的修改文件
 def get_modified_files():
@@ -54,7 +53,7 @@ def get_modified_files():
             modified_files.append(item.a_path)  # 获取修改文件的相对路径
         return modified_files
     except git.exc.InvalidGitRepositoryError as e:
-        print(f"Error accessing Git repository: {e}")
+        print(f"获取本地修改失败: {e}")
         return []
 
 # 获取本地 Git 仓库中的所有文件
@@ -66,6 +65,8 @@ def get_all_files():
     return all_files
 
 def main():
+    # servers = ["192.168.1.159", "192.168.1.160", "192.168.1.161"]
+    servers = ["192.168.1.222"]
     # 解析命令行参数
     parser = argparse.ArgumentParser(description="同步 Git 文件到远程设备")
     parser.add_argument(
@@ -89,17 +90,19 @@ def main():
         return
 
     # 创建 SSH 客户端
-    ssh_client = create_ssh_client(REMOTE_HOST, REMOTE_PORT, REMOTE_USER, REMOTE_PASSWORD)
-    
-    if ssh_client is None:
-        print("无法连接到远程服务器.")
-        return
+    for server in servers:
+        print(f"正在连接到 {server}...")
+        ssh_client = create_ssh_client(server, REMOTE_PORT, REMOTE_USER, REMOTE_PASSWORD)
+        
+        if ssh_client is None:
+            print("无法连接到远程服务器.")
+            return
 
-    # 复制文件到远程设备
-    copy_files_to_remote(ssh_client, files_to_copy)
+        # 复制文件到远程设备
+        copy_files_to_remote(ssh_client, files_to_copy)
 
-    # 关闭 SSH 连接
-    ssh_client.close()
+        # 关闭 SSH 连接
+        ssh_client.close()
 
 if __name__ == "__main__":
     main()

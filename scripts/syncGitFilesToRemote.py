@@ -5,11 +5,16 @@ import argparse
 from scp import SCPClient
 
 # 配置
-LOCAL_GIT_DIR = 'D:/safe/blj_web/BLJ/src/main/webapp/'  # 本地 Git 仓库路径
+# LOCAL_GIT_DIR = 'D:/safe/blj_web/BLJ/src/main/webapp/'  # 本地 Git 仓库路径
+LOCAL_GIT_DIR = 'D:/safe/sg_web/'  # 本地 Git 仓库路径
+DELETE_PATH = 'public/'
 REMOTE_PORT = 22  # 默认 SSH 端口是 22
 REMOTE_USER = 'root'  # 远程服务器的 SSH 用户名
-REMOTE_PASSWORD = 'admin@123'  # 远程服务器的 SSH 密码（也可以使用密钥）
-REMOTE_BASE_DIR = '/opt/lsblj/tomcat/webapps/ROOT/'  # 远程机器上需要存放文件的目录
+# REMOTE_USER = 'test'  # 远程服务器的 SSH 用户名
+# REMOTE_PASSWORD = 'Kylin@2024'  # 远程服务器的 SSH 密码（也可以使用密钥）
+REMOTE_PASSWORD = 'BLJ@2024blj'  # 远程服务器的 SSH 密码（也可以使用密钥）
+# REMOTE_PASSWORD = 'admin@123'  # 远程服务器的 SSH 密码（也可以使用密钥）
+REMOTE_BASE_DIR = '/opt/lsblj/sbin/sg_web/'  # 远程机器上需要存放文件的目录
 
 # 创建 SSH 客户端
 def create_ssh_client(server, port, user, password):
@@ -29,6 +34,7 @@ def copy_files_to_remote(ssh_client, local_files):
         for local_file in local_files:
             # 计算相对于 LOCAL_GIT_DIR 的相对路径
             local_file_path = LOCAL_GIT_DIR + local_file
+            local_file = local_file.replace(DELETE_PATH, '')
             remote_file_path = REMOTE_BASE_DIR + local_file
             
             # 确保远程路径的目录存在
@@ -49,24 +55,29 @@ def get_modified_files():
         repo = git.Repo(LOCAL_GIT_DIR)
         modified_files = []
         # 获取所有未提交的修改
-        for item in repo.index.diff(None):
-            modified_files.append(item.a_path)  # 获取修改文件的相对路径
+        for item in repo.git.status(porcelain=True).splitlines():
+            status, path = item[:2].strip(), item[3:]
+            if status in {"M", "A", "D", "R", "C", "??"}:  # M=Modified, A=Added, ??=Untracked
+                modified_files.append(path)
         return modified_files
     except git.exc.InvalidGitRepositoryError as e:
         print(f"获取本地修改失败: {e}")
         return []
 
 # 获取本地 Git 仓库中的所有文件
-def get_all_files():
+def get_all_files():    
     all_files = []
     for root, dirs, files in os.walk(LOCAL_GIT_DIR):
+        print(files)
         for file in files:
             all_files.append(os.path.join(root, file))
+
     return all_files
 
 def main():
     # servers = ["192.168.1.159", "192.168.1.160", "192.168.1.161"]
-    servers = ["192.168.1.222"]
+    # servers = ["192.168.1.187"]
+    servers = ["192.168.20.58"]
     # 解析命令行参数
     parser = argparse.ArgumentParser(description="同步 Git 文件到远程设备")
     parser.add_argument(

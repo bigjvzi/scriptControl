@@ -6,6 +6,7 @@ from pathlib import Path
 
 # 配置存储路径
 SCRIPT_FOLDER = "./scripts"  # 请替换为你的脚本目录
+SCRIPT_CONFIGS = "./script_configs.json"  # 脚本配置
 HISTORY_FILE = "./path_history.json"  # 用于存储文件路径历史记录
 
 # 加载路径历史记录

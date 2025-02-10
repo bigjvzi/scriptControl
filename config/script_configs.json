@@ -1,29 +1,45 @@
 {
-    "concat.py": {
-        "input_file": {
-            "label": "选择输入文件",
-            "type": "file",
-            "directory": "./data"
-        },
-        "param2": {
-            "label": "选择参数2",
-            "type": "select",
-            "options": ["选项1", "选项2", "选项3"],
-            "default": "选项2"
-        },
-        "param3": {
-            "label": "数字参数3",
-            "type": "files",
-            "default": 10
-        }
+    "文件处理器": {
+        "module": "file_processor",
+        "description": "处理文本文件的基础脚本",
+        "preview": true,
+        "parameters": [
+            {
+                "name": "input_file",
+                "label": "输入文件路径",
+                "type": "file",
+                "required": true
+            },
+            {
+                "name": "mode",
+                "label": "处理模式",
+                "type": "dropdown",
+                "options": ["模式A", "模式B", "模式C"],
+                "default": "模式A"
+            },
+            {
+                "name": "output_dir",
+                "label": "输出目录",
+                "type": "file",
+                "filetype": "directory"
+            }
+        ]
     },
-    "i18n.py": {
-        "threshold": {
-            "label": "阈值",
-            "type": "slider",
-            "min": 0,
-            "max": 100,
-            "default": 50
-        }
+    "数据分析器": {
+        "module": "data_analyzer",
+        "description": "执行数据分析任务",
+        "parameters": [
+            {
+                "name": "data_source",
+                "label": "数据源路径",
+                "type": "file"
+            },
+            {
+                "name": "threshold",
+                "label": "分析阈值",
+                "type": "number",
+                "default": 0.5
+            }
+        ]
     }
 }

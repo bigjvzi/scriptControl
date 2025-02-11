@@ -40,14 +40,8 @@ def extract_chinese_text(directory):
 
     return extracted_text
 
-def main():
-    directory = input("Enter the directory to scan: ").strip()
-
-    if not os.path.isdir(directory):
-        print("The specified path is not a directory.")
-        return
-
-    result = extract_chinese_text(directory)
+def main(input_folder=None):
+    result = extract_chinese_text(input_folder)
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     output_file = os.path.join(script_dir, 'extracted_chinese_text.md')

@@ -5,15 +5,14 @@ import argparse
 from scp import SCPClient
 
 # 配置
-LOCAL_GIT_DIR = 'D:/safe/blj_web/BLJ/src/main/webapp/'  # 本地 Git 仓库路径
-# LOCAL_GIT_DIR = 'D:/safe/sg_web/'  # 本地 Git 仓库路径
-# DELETE_PATH = 'public/'
-
-DELETE_PATH = ''
+# LOCAL_GIT_DIR = 'D:/safe/blj_web/BLJ/src/main/webapp/'  # 本地 Git 仓库路径
+LOCAL_GIT_DIR = 'D:/safe/sg_web/'  # 本地 Git 仓库路径
+DELETE_PATH = 'public/'
+# DELETE_PATH = ''
 
 # REMOTE_SERVERS = ["192.168.1.159", "192.168.1.160", "192.168.1.161"]
 # REMOTE_SERVERS = ["192.168.1.187"]
-REMOTE_SERVERS = ["192.168.20.77"]
+REMOTE_SERVERS = ["192.168.20.58"]
 # REMOTE_SERVERS = ["192.168.75.129"]
 
 # REMOTE_PORT = 22  # 默认 SSH 端口是 22
@@ -24,22 +23,28 @@ REMOTE_USER = 'root'  # 远程服务器的 SSH 用户名
 # REMOTE_USER = 'web_develop'  # 远程服务器的 SSH 用户名
 
 # REMOTE_PASSWORD = 'Kylin@2024'  # 远程服务器的 SSH 密码（也可以使用密钥）
-# REMOTE_PASSWORD = 'BLJ@2024blj'  # 远程服务器的 SSH 密码（也可以使用密钥）
-REMOTE_PASSWORD = 'LS@2023blj25'  # 远程服务器的 SSH 密码（也可以使用密钥）
+REMOTE_PASSWORD = 'BLJ@2024blj'  # 远程服务器的 SSH 密码（也可以使用密钥）
+# REMOTE_PASSWORD = 'LS@2023blj25'  # 远程服务器的 SSH 密码（也可以使用密钥）
 # REMOTE_PASSWORD = 'admin@123'  # 远程服务器的 SSH 密码（也可以使用密钥）
 
-# REMOTE_BASE_DIR = '/opt/lsblj/sbin/sg_web/'  # 远程机器上需要存放文件的目录
-REMOTE_BASE_DIR = '/opt/lsblj/tomcat/webapps/ROOT/'  # 远程机器上需要存放文件的目录
+REMOTE_BASE_DIR = '/opt/lsblj/sg_web/'  # 远程机器上需要存放文件的目录
+# REMOTE_BASE_DIR = '/opt/lsblj/tomcat/webapps/ROOT/'  # 远程机器上需要存放文件的目录
 
 # 创建 SSH 客户端
 def create_ssh_client(server, port, user, password):
     try:
+        # 创建一个SSH客户端实例
         ssh = paramiko.SSHClient()
+        # 设置自动添加主机密钥策略
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        # 连接到SSH服务器
         ssh.connect(server, port, user, password)
+        # 返回SSH客户端实例
         return ssh
     except Exception as e:
+        # 打印连接错误信息
         print(f"Error connecting to {server}: {e}")
+        # 返回None表示连接失败
         return None
 
 # 使用 SCP 复制文件到远程服务器

@@ -3,19 +3,6 @@ import requests
 import shutil
 import openpyxl
 
-def download_file(url, save_path):
-    """
-    下载文件到指定路径
-    """
-    response = requests.get(url, stream=True)
-    if response.status_code == 200:
-        with open(save_path, 'wb') as file:
-            shutil.copyfileobj(response.raw, file)
-        print(f"File downloaded: {save_path}")
-    else:
-        print(f"Failed to download file. Status code: {response.status_code}")
-        raise Exception("Download failed.")
-
 def to_unicode(text):
     if not text:
         return ""

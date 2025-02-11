@@ -1,0 +1,26 @@
+{
+  "同步代码到服务器": {
+    "20.58-sg": {
+      "input_folder": "D:/safe/sg_web/",
+      "delete_path": "public/",
+      "remote_server": "192.168.20.58",
+      "prot": "12288",
+      "password": "BLJ@2024blj",
+      "remote_folder": "/opt/lsblj/sbin/sg_web/"
+    },
+    "1.159-blj": {
+      "input_folder": "D:/safe/blj_web/BLJ/src/main/webapp",
+      "delete_path": "",
+      "remote_server": "192.168.1.159",
+      "prot": "22",
+      "password": "BLJ@2024blj",
+      "remote_folder": "/opt/lsblj/tomcat/webapps/ROOT/"
+    }
+  },
+  "数据分析器": {
+    "基础配置": {
+      "data_source": "/data/source.csv",
+      "threshold": "0.7"
+    }
+  }
+}

@@ -1,45 +1,94 @@
 {
-    "文件处理器": {
-        "module": "file_processor",
-        "description": "处理文本文件的基础脚本",
-        "preview": true,
-        "parameters": [
-            {
-                "name": "input_file",
-                "label": "输入文件路径",
-                "type": "file",
-                "required": true
-            },
-            {
-                "name": "mode",
-                "label": "处理模式",
-                "type": "dropdown",
-                "options": ["模式A", "模式B", "模式C"],
-                "default": "模式A"
-            },
-            {
-                "name": "output_dir",
-                "label": "输出目录",
-                "type": "file",
-                "filetype": "directory"
-            }
-        ]
-    },
-    "数据分析器": {
-        "module": "data_analyzer",
-        "description": "执行数据分析任务",
-        "parameters": [
-            {
-                "name": "data_source",
-                "label": "数据源路径",
-                "type": "file"
-            },
-            {
-                "name": "threshold",
-                "label": "分析阈值",
-                "type": "number",
-                "default": 0.5
-            }
-        ]
-    }
+  "文件处理器": {
+    "module": "file_processor",
+    "description": "处理文本文件的基础脚本",
+    "preview": true,
+    "parameters": [
+      {
+        "name": "input_file",
+        "label": "输入文件路径",
+        "type": "file",
+        "required": true
+      },
+      {
+        "name": "mode",
+        "label": "处理模式",
+        "type": "dropdown",
+        "options": ["模式A", "模式B", "模式C"],
+        "default": "模式A"
+      },
+      {
+        "name": "output_dir",
+        "label": "输出目录",
+        "type": "file",
+        "filetype": "directory"
+      }
+    ]
+  },
+  "扫描中文": {
+    "module": "scanChinese",
+    "description": "扫描目标目录下指定文件的中文内容，并输出结果。",
+    "preview": true,
+    "parameters": [
+      {
+        "name": "input_folder",
+        "label": "输入文件路径",
+        "type": "folder",
+        "required": true
+      }
+    ]
+  },
+  "同步代码到服务器": {
+    "module": "syncGitFilesToRemote",
+    "description": "将本地代码同步到远程服务器。",
+    "parameters": [
+      {
+        "name": "input_folder",
+        "label": "本地路径",
+        "type": "folder"
+      },
+      {
+        "name": "delete_path",
+        "label": "忽略目录",
+        "type": "string"
+      },
+      {
+        "name": "remote_server",
+        "label": "地址",
+        "type": "string"
+      },
+      {
+        "name": "prot",
+        "label": "端口",
+        "type": "string"
+      },
+      {
+        "name": "password",
+        "label": "密码",
+        "type": "string"
+      },
+      {
+        "name": "remote_folder",
+        "label": "目标路径",
+        "type": "string"
+      }
+    ]
+  },
+  "数据分析器": {
+    "module": "data_analyzer",
+    "description": "执行数据分析任务",
+    "parameters": [
+      {
+        "name": "data_source",
+        "label": "数据源路径",
+        "type": "file"
+      },
+      {
+        "name": "threshold",
+        "label": "分析阈值",
+        "type": "number",
+        "default": 0.5
+      }
+    ]
+  }
 }

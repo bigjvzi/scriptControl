@@ -145,6 +145,12 @@ class ScriptRunnerApp:
             preview_btn = ttk.Button(self.param_frame, text="预览文件内容",
                                    command=self.preview_file)
             preview_btn.grid(row=row, columnspan=2, pady=5)
+
+        # 自动选择使用次数最多的配置
+        sorted_configs = self.get_sorted_configs()
+        print(sorted_configs)
+        if sorted_configs:
+            self.apply_config(sorted_configs[0][0])
     
     def browse_file(self, entry_widget):
         filename = filedialog.askopenfilename()
@@ -320,55 +326,136 @@ class ScriptRunnerApp:
             messagebox.showerror("错误", f"保存失败：{str(e)}")
     
     def load_config(self):
-        # 配置加载逻辑
-        if not self.current_script:
-            messagebox.showwarning("警告", "请先选择脚本！")
-            return
-        
-        script_name = self.script_combobox.get()
-        configs = self.saved_configs.get(script_name, {})
-        
-        if not configs:
-            messagebox.showinfo("提示", "该脚本没有保存的配置")
-            return
-        
-        # 创建选择对话框
-        dialog = tk.Toplevel(self.root)
-        dialog.title("选择配置")
-        
-        ttk.Label(dialog, text="请选择要加载的配置：").pack(padx=10, pady=5)
-        
-        listbox = tk.Listbox(dialog, width=30)
-        listbox.pack(padx=10, pady=5, fill=tk.BOTH)
-        
-        for name in configs.keys():
-            listbox.insert(tk.END, name)
-        
-        def on_select():
-            selected = listbox.curselection()
-            if selected:
-                config_name = listbox.get(selected[0])
-                self.apply_config(configs[config_name])
-                dialog.destroy()
-        
-        ttk.Button(dialog, text="加载", command=on_select).pack(pady=5)
-        ttk.Button(dialog, text="取消", command=dialog.destroy).pack(pady=5)
+        # 创建带排序的配置对话框
+        dialog = ConfigDialog(
+            parent=self.root,
+            title="选择配置",
+            configs=self.get_sorted_configs(),
+            on_edit=self.handle_config_edit
+        )
+        dialog.show()
 
-    def apply_config(self, config):
-        """应用配置到界面"""
-        for param in self.current_script['parameters']:
-            param_name = param['name']
-            value = config.get(param_name, "")
-            widget = self.input_widgets[param_name]
-            
-            if param['type'] == 'file':
-                widget.delete(0, tk.END)
-                widget.insert(0, value)
-            elif param['type'] == 'dropdown':
-                widget.set(value)
-            else:
-                widget.delete(0, tk.END)
-                widget.insert(0, value)
+    def handle_config_edit(self, old_name):
+        # 获取原始配置数据
+        original = self.saved_configs[self.current_script][old_name]
+        
+        # 创建编辑对话框
+        dialog = EditConfigDialog(
+            self.root,
+            original_name=old_name,
+            original_params=original['params'],
+            on_save=lambda new_name, params: self.update_config(old_name, new_name, params)
+        )
+        dialog.show()
+
+    def update_config(self, old_name, new_name, params):
+        # 处理名称冲突
+        if new_name != old_name and new_name in self.saved_configs[self.current_script]:
+            if not messagebox.askyesno("确认", "配置已存在，是否覆盖？"):
+                return
+        
+        # 更新配置数据
+        config_data = {
+            'params': params,
+            'usage_count': self.saved_configs[self.current_script][old_name]['usage_count'],
+            'last_used': datetime.now().isoformat()
+        }
+        
+        # 删除旧配置（如果重命名）
+        if new_name != old_name:
+            del self.saved_configs[self.current_script][old_name]
+        
+        # 保存新配置
+        self.saved_configs[self.current_script][new_name] = config_data
+        self.save_config_file()
+
+    def apply_config(self, config_name):
+        """应用配置并更新统计"""
+        config_data = self.saved_configs[self.current_script][config_name]
+        
+        # 更新使用统计
+        config_data['usage_count'] = config_data.get('usage_count', 0) + 1
+        config_data['last_used'] = datetime.now().isoformat()
+        
+        # 保存到文件
+        self.save_config_file()
+        
+        # 应用参数
+        self._fill_parameters(config_data['params'])
+
+    def get_sorted_configs(self):
+        """获取排序后的配置列表"""
+        configs = self.saved_configs.get(self.current_script["module"], {})["configs"].items()
+        return sorted(
+            configs,
+            key=lambda x: (x[1]['usage_count'], x[1]['last_used']),
+            reverse=True
+        )
+    
+class ConfigDialog(tk.Toplevel):
+    def __init__(self, parent, configs, on_edit):
+        super().__init__(parent)
+        self.configs = configs
+        self.on_edit = on_edit
+        
+        # 创建列表组件
+        self.tree = ttk.Treeview(self, columns=('usage', 'last_used'), show='headings')
+        self.tree.heading('#0', text='配置名称')
+        self.tree.heading('usage', text='使用次数')
+        self.tree.heading('last_used', text='最后使用')
+        
+        # 填充数据
+        for name, data in configs:
+            self.tree.insert('', 'end', text=name,
+                            values=(data['usage_count'], 
+                                   data['last_used'][:16]))
+        
+        # 添加操作按钮
+        btn_frame = ttk.Frame(self)
+        ttk.Button(btn_frame, text="加载", command=self.on_load).pack(side=tk.LEFT)
+        ttk.Button(btn_frame, text="编辑", command=self.on_edit).pack(side=tk.LEFT)
+        ttk.Button(btn_frame, text="删除", command=self.on_delete).pack(side=tk.LEFT)
+        
+        self.tree.pack(fill=tk.BOTH, expand=True)
+        btn_frame.pack(pady=5)
+    
+    def on_edit(self):
+        selected = self.tree.selection()
+        if selected:
+            config_name = self.tree.item(selected[0], 'text')
+            self.on_edit(config_name)
+
+class EditConfigDialog(tk.Toplevel):
+    def __init__(self, parent, original_name, original_params, on_save):
+        super().__init__(parent)
+        self.on_save = on_save
+        
+        # 名称编辑
+        ttk.Label(self, text="配置名称:").grid(row=0, column=0)
+        self.name_entry = ttk.Entry(self)
+        self.name_entry.insert(0, original_name)
+        self.name_entry.grid(row=0, column=1)
+        
+        # 参数编辑
+        self.param_entries = {}
+        for row, (key, value) in enumerate(original_params.items(), start=1):
+            ttk.Label(self, text=f"{key}:").grid(row=row, column=0)
+            entry = ttk.Entry(self)
+            entry.insert(0, value)
+            entry.grid(row=row, column=1)
+            self.param_entries[key] = entry
+        
+        # 操作按钮
+        btn_frame = ttk.Frame(self)
+        ttk.Button(btn_frame, text="保存", command=self.save).pack(side=tk.LEFT)
+        ttk.Button(btn_frame, text="取消", command=self.destroy).pack(side=tk.LEFT)
+        btn_frame.grid(row=row+1, columnspan=2)
+    
+    def save(self):
+        new_name = self.name_entry.get()
+        params = {k: v.get() for k, v in self.param_entries.items()}
+        self.on_save(new_name, params)
+        self.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -3,32 +3,16 @@ import git
 import paramiko
 import argparse
 from scp import SCPClient
+import sys
 
 # 配置
-# LOCAL_GIT_DIR = 'D:/safe/blj_web/BLJ/src/main/webapp/'  # 本地 Git 仓库路径
-LOCAL_GIT_DIR = 'D:/safe/sg_web/'  # 本地 Git 仓库路径
-DELETE_PATH = 'public/'
-# DELETE_PATH = ''
-
-# REMOTE_SERVERS = ["192.168.1.159", "192.168.1.160", "192.168.1.161"]
-# REMOTE_SERVERS = ["192.168.1.187"]
-REMOTE_SERVERS = ["192.168.20.58"]
-# REMOTE_SERVERS = ["192.168.75.129"]
-
-# REMOTE_PORT = 22  # 默认 SSH 端口是 22
+LOCAL_GIT_DIR = None  # 本地 Git 仓库路径
+DELETE_PATH = None
+REMOTE_SERVERS = None
 REMOTE_PORT = 12288  # 默认 SSH 端口是 22
-
-REMOTE_USER = 'root'  # 远程服务器的 SSH 用户名
-# REMOTE_USER = 'test'  # 远程服务器的 SSH 用户名
-# REMOTE_USER = 'web_develop'  # 远程服务器的 SSH 用户名
-
-# REMOTE_PASSWORD = 'Kylin@2024'  # 远程服务器的 SSH 密码（也可以使用密钥）
-REMOTE_PASSWORD = 'BLJ@2024blj'  # 远程服务器的 SSH 密码（也可以使用密钥）
-# REMOTE_PASSWORD = 'LS@2023blj25'  # 远程服务器的 SSH 密码（也可以使用密钥）
-# REMOTE_PASSWORD = 'admin@123'  # 远程服务器的 SSH 密码（也可以使用密钥）
-
-REMOTE_BASE_DIR = '/opt/lsblj/sg_web/'  # 远程机器上需要存放文件的目录
-# REMOTE_BASE_DIR = '/opt/lsblj/tomcat/webapps/ROOT/'  # 远程机器上需要存放文件的目录
+REMOTE_USER = None  # 远程服务器的 SSH 用户名
+REMOTE_PASSWORD = None  # 远程服务器的 SSH 密码（也可以使用密钥）
+REMOTE_BASE_DIR = None
 
 # 创建 SSH 客户端
 def create_ssh_client(server, port, user, password):
@@ -94,7 +78,14 @@ def get_all_files():
 
     return all_files
 
-def main():
+def main(input_folder=None, delete_path=None,remote_server=None,prot=None,username=None,password=None,remote_folder=None):
+    LOCAL_GIT_DIR = input_folder
+    DELETE_PATH = delete_path
+    REMOTE_SERVERS = remote_server.split(',')
+    REMOTE_PORT = prot
+    REMOTE_USER = username
+    REMOTE_PASSWORD = password
+    REMOTE_BASE_DIR = remote_folder
     # 解析命令行参数
     parser = argparse.ArgumentParser(description="同步 Git 文件到远程设备")
     parser.add_argument(

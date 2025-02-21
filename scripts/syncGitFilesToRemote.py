@@ -78,13 +78,20 @@ def get_all_files():
 
     return all_files
 
-def main(input_folder=None, delete_path=None,remote_server=None,prot=None,username=None,password=None,remote_folder=None):
+def main(input_folder=None, delete_path="",remote_server=None,prot=22,username=None,password=None,remote_folder=None):
+    global LOCAL_GIT_DIR
     LOCAL_GIT_DIR = input_folder
+    global DELETE_PATH
     DELETE_PATH = delete_path
+    global REMOTE_SERVERS
     REMOTE_SERVERS = remote_server.split(',')
+    global REMOTE_PORT
     REMOTE_PORT = prot
+    global REMOTE_USER
     REMOTE_USER = username
+    global REMOTE_PASSWORD
     REMOTE_PASSWORD = password
+    global REMOTE_BASE_DIR
     REMOTE_BASE_DIR = remote_folder
     # 解析命令行参数
     parser = argparse.ArgumentParser(description="同步 Git 文件到远程设备")

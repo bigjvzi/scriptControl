@@ -59,67 +59,53 @@ def process_excel_and_generate_txt(
     except Exception as e:
         print(f"发生错误: {e}")
 
+def main(**params):
+     # 获取当前目录路径
+
+    print(params)
+
+    selected_file = params["input_folder"]
+    wb = openpyxl.load_workbook(selected_file)
+
+    # 列出表名并让用户选择
+    print("找到以下表：")
+    sheet_names = wb.sheetnames
+    for i, sheet_name in enumerate(sheet_names, start=1):
+        print(f"{i}. {sheet_name}")
+
+    sheet_choice = int(input("请选择要处理的表编号：")) - 1
+    if sheet_choice < 0 or sheet_choice >= len(sheet_names):
+        print("无效选择！")
+    else:
+        selected_sheet = sheet_names[sheet_choice]
+
+        process_excel_and_generate_txt(
+            input_file=selected_file,  # 输入文件名
+            output_file="output-cn.txt",  # 输出文件名
+            col1="A",  # 第一列
+            col2="B",  # 第二列
+            sheet_name=selected_sheet,  # 用户选择的表名
+            delimiter=" = ",  # 连接符号
+            encoding="unicode"
+        )
+        process_excel_and_generate_txt(
+            input_file=selected_file,  # 输入文件名
+            output_file="output-en.txt",  # 输出文件名
+            col1="A",  # 第一列
+            col2="C",  # 第二列
+            sheet_name=selected_sheet,  # 用户选择的表名
+            delimiter=" = ",  # 连接符号
+        )
+        process_excel_and_generate_txt(
+            input_file=selected_file,  # 输入文件名
+            output_file="output-config.txt",  # 输出文件名
+            col1="A",  # 第一列
+            col2="B",  # 第二列
+            sheet_name=selected_sheet,  # 用户选择的表名
+            delimiter=" = ",  # 连接符号
+        )
+
+
 
 if __name__ == "__main__":
-    # 获取当前目录路径
-    current_dir = os.getcwd()
-
-    # 列出当前目录中的所有 .xlsx 文件
-    excel_files = list_excel_files(current_dir)
-
-    if not excel_files:
-        print("当前目录没有找到任何 .xlsx 文件！")
-    else:
-        print("找到以下 .xlsx 文件：")
-        for i, file in enumerate(excel_files, start=1):
-            print(f"{i}. {file}")
-
-        # 让用户选择文件
-        try:
-            choice = int(input("请输入要处理的文件编号：")) - 1
-            if choice < 0 or choice >= len(excel_files):
-                print("无效选择！")
-            else:
-                selected_file = excel_files[choice]
-                wb = openpyxl.load_workbook(selected_file)
-
-                # 列出表名并让用户选择
-                print("找到以下表：")
-                sheet_names = wb.sheetnames
-                for i, sheet_name in enumerate(sheet_names, start=1):
-                    print(f"{i}. {sheet_name}")
-
-                sheet_choice = int(input("请选择要处理的表编号：")) - 1
-                if sheet_choice < 0 or sheet_choice >= len(sheet_names):
-                    print("无效选择！")
-                else:
-                    selected_sheet = sheet_names[sheet_choice]
-
-                    process_excel_and_generate_txt(
-                        input_file=selected_file,  # 输入文件名
-                        output_file="output-cn.txt",  # 输出文件名
-                        col1="A",  # 第一列
-                        col2="B",  # 第二列
-                        sheet_name=selected_sheet,  # 用户选择的表名
-                        delimiter=" = ",  # 连接符号
-                        encoding="unicode"
-                    )
-                    process_excel_and_generate_txt(
-                        input_file=selected_file,  # 输入文件名
-                        output_file="output-en.txt",  # 输出文件名
-                        col1="A",  # 第一列
-                        col2="C",  # 第二列
-                        sheet_name=selected_sheet,  # 用户选择的表名
-                        delimiter=" = ",  # 连接符号
-                    )
-                    process_excel_and_generate_txt(
-                        input_file=selected_file,  # 输入文件名
-                        output_file="output-config.txt",  # 输出文件名
-                        col1="A",  # 第一列
-                        col2="B",  # 第二列
-                        sheet_name=selected_sheet,  # 用户选择的表名
-                        delimiter=" = ",  # 连接符号
-                    )
-
-        except ValueError:
-            print("请输入有效的数字！")
+    main()

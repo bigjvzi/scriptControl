@@ -1,4 +1,40 @@
 {
+  "表格转翻译配置": {
+    "module": "concat",
+    "description": "表格转翻译配置",
+    "parameters": [
+      {
+        "name": "input_folder",
+        "label": "表格本地路径",
+        "type": "file"
+      },
+      {
+        "name": "remote_folder",
+        "label": "目标路径",
+        "type": "folder"
+      },
+      {
+        "name": "file_name",
+        "label": "导出文件名,多个导出文件用逗号分隔,下列参数保持一致",
+        "type": "string"
+      },
+      {
+        "name": "delimiter",
+        "label": "连接符",
+        "type": "string"
+      },
+      {
+        "name": "encoding",
+        "label": "value格式",
+        "type": "string"
+      },
+      {
+        "name": "end_symbol",
+        "label": "结尾符号",
+        "type": "string"
+      }
+    ]
+  },
   "扫描中文": {
     "module": "scanChinese",
     "description": "扫描目标目录下指定文件的中文内容，并输出结果。",

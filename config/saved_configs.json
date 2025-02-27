@@ -36,8 +36,8 @@
           "password": "BLJ@2024blj",
           "remote_folder": "/opt/lsblj/sg_web/"
         },
-        "usage_count": 18,
-        "last_used": "2025-02-20T19:52:42.567476"
+        "usage_count": 26,
+        "last_used": "2025-02-26T20:37:03.854650"
       },
       "159-161 集群": {
         "params": {
@@ -67,5 +67,21 @@
       }
     },
     "default_config": "20.58-sg"
+  },
+  "表格转翻译配置": {
+    "configs": {
+      "JQ国际化": {
+        "params": {
+          "input_folder": "D:/桌面/国际化key-value维护表.xlsx",
+          "remote_folder": "D:/safe/sg_web/public/control/modules/i18n",
+          "tabel_index": "2",
+          "template": "$A = $B",
+          "file_name": "strings_zh.properties*,strings_en.properties"
+        },
+        "usage_count": 5,
+        "last_used": "2025-02-27T09:40:56.876606"
+      }
+    },
+    "default_config": null
   }
 }

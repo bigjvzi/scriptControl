@@ -120,8 +120,13 @@ class ScriptRunnerApp:
         self.input_widgets = {}
         for row, param in enumerate(self.current_script['parameters']):
             label = ttk.Label(self.param_frame, text=param['label'])
+
+            if "type" not in param:
+                label.grid(row=row, padx=5, pady=2, sticky=tk.W)
+                continue
+
             label.grid(row=row, column=1, padx=5, pady=2, sticky=tk.W)
-            
+
             if param['type'] == 'file':
                 self.create_file_input(row, param)
             elif param['type'] == 'folder':
@@ -195,9 +200,8 @@ class ScriptRunnerApp:
         # 获取使用最多的配置
         sorted_configs = sorted(
             script_configs['configs'].items(),
-            key=lambda x: (-x[1]['usage_count'], x[1]['last_used']),
-            reverse=False
-        )
+            key=lambda x: x[1]['last_used'], reverse=True)
+        
         
         if sorted_configs:
             config_name = sorted_configs[0][0]
@@ -330,7 +334,7 @@ class ScriptRunnerApp:
         dialog.title("选择配置")
         
         # 创建列表
-        tree = ttk.Treeview(dialog, columns=('usage', 'last_used'), show='headings')
+        tree = ttk.Treeview(dialog, columns=('#0', 'usage', 'last_used'), show='headings')
         tree.heading('#0', text='配置名称')
         tree.heading('usage', text='使用次数')
         tree.heading('last_used', text='最后使用时间')
@@ -338,13 +342,13 @@ class ScriptRunnerApp:
         # 排序配置
         sorted_configs = sorted(
             script_configs['configs'].items(),
-            key=lambda x: (-x[1]['usage_count'], x[1]['last_used']),
+            key=lambda x: x[1]['last_used'],
             reverse=False
         )
         
         for name, data in sorted_configs:
             tree.insert('', 'end', text=name,
-                       values=(data['usage_count'], data['last_used'][:16]))
+                       values=(name, data['last_used'][:16], data['usage_count']))
         
         # 添加按钮
         btn_frame = ttk.Frame(dialog)

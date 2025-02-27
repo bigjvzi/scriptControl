@@ -14,23 +14,27 @@
         "type": "folder"
       },
       {
+        "name": "tabel_index",
+        "label": "表格编号(一个xlsx文件中多个表格)",
+        "type": "string"
+      },
+      {
+        "name": "template",
+        "label": "模版字符串 默认为 $A = $B",
+        "type": "string"
+      },
+      {
+        "label": "需要导出多个文件时，文件名用逗号分隔。后面参数只能填写一个或对应多个"
+      },
+      {
+        "label": "多个导出文件的链接顺序为A+B,A+C,A+D..."
+      },
+      {
+        "label": "导出Unicode解码$B的文件，文件名最后加一个*"
+      },
+      {
         "name": "file_name",
-        "label": "导出文件名,多个导出文件用逗号分隔,下列参数保持一致",
-        "type": "string"
-      },
-      {
-        "name": "delimiter",
-        "label": "连接符",
-        "type": "string"
-      },
-      {
-        "name": "encoding",
-        "label": "value格式",
-        "type": "string"
-      },
-      {
-        "name": "end_symbol",
-        "label": "结尾符号",
+        "label": "导出文件名",
         "type": "string"
       }
     ]

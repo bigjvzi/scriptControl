@@ -3,5 +3,5 @@
 
 # 运行
 ```
-streamlit run main.py
+python main.py
 ```
